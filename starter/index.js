@@ -23,6 +23,20 @@ import { createServer } from 'http';
 
 ///////////////////////////////////SERVER///////////////////////////
 const server = createServer((req, res) => {
+    const path = req.url;
+    console.log(path)
+    if (path === '/' || path === '/overview') {
+        res.end('This is main page!')
+    }
+    else if (path === '/product') {
+        res.end('This is the product page!')
+    }
+    else {
+        res.writeHead(404, {
+            'Content-type': 'text/html'
+        })
+        res.end('<h1>Page not found!</h1>')
+    }
     res.end('Hello from Node Server!')
 })
 
