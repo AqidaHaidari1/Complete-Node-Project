@@ -22,6 +22,9 @@ import { createServer } from 'http';
 // console.log('Will read the FIle');
 
 ///////////////////////////////////SERVER///////////////////////////
+
+const data = readFileSync('./starter/dev-data/data.json', 'utf-8');
+
 const server = createServer((req, res) => {
     const path = req.url;
     console.log(path)
@@ -30,6 +33,12 @@ const server = createServer((req, res) => {
     }
     else if (path === '/product') {
         res.end('This is the product page!')
+    }
+    else if (path === '/api') {
+        res.writeHead('200', {
+            'Content-type': 'application/json',
+        })
+        res.end(data);
     }
     else {
         res.writeHead(404, {
