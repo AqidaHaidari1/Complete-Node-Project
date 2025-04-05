@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, readFile, writeFile } from 'fs';
 import { createServer } from 'http'; 
-
 import url from 'url';
+import replaceTemplate from './modules/replaceTempplate.js';
 
 
 ///////////////////////////////////FILE///////////////////////////
@@ -25,18 +25,6 @@ import url from 'url';
 
 ///////////////////////////////////SERVER///////////////////////////
 
-const replaceTempplate = (temp, product) => {
-    let output = temp.replace(/{%PRODUCTNAME%}/g, product.productName);
-    output = output.replace(/{%IMAGE%}/g, product.image);
-    output = output.replace(/{%PRICE%}/g, product.price);
-    output = output.replace(/{%QUANTITY%}/g, product.quantity);
-    output = output.replace(/{%NUTRIENTS%}/g, product.nutrients);
-    output = output.replace(/{%FROM%}/g, product.from);
-    output = output.replace(/{%DESCRIPTION%}/g, product.description);
-    output = output.replace(/{%ID%}/g, product.id);
-    if (!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
-    return output;
-}
 const data = readFileSync('./starter/dev-data/data.json', 'utf-8');
 const tempCard = readFileSync('./starter/templates/template-card.html', 'utf-8');
 const tempProduct = readFileSync('./starter/templates/template-product.html', 'utf-8');
@@ -48,7 +36,7 @@ const server = createServer((req, res) => {
     const { pathname, query } = url.parse(req.url, true)
     
     if (pathname === '/' || pathname === '/overview') {
-        const cardsHtml = dataObj.map(el => replaceTempplate(tempCard, el)).join('')
+        const cardsHtml = dataObj.map(el => replaceTemplate(tempCard, el)).join('')
         const overviewPage = tempOverview.replace('{%PRODUCTS_CARDS%}', cardsHtml)
         
         res.writeHead(202,{
@@ -61,7 +49,7 @@ const server = createServer((req, res) => {
             'COntent-type': 'text/html'
         })
         const product = dataObj[query.id];
-        const output = replaceTempplate(tempProduct, product)
+        const output = replaceTemplate(tempProduct, product)
         res.end(output);
     }
     else if (pathname === '/api') {
