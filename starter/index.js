@@ -1,6 +1,8 @@
 import { readFileSync, writeFileSync, readFile, writeFile } from 'fs';
 import { createServer } from 'http'; 
 
+import url from 'url';
+
 
 ///////////////////////////////////FILE///////////////////////////
 
@@ -43,9 +45,9 @@ const tempOverview = readFileSync('./starter/templates/template-overview.html', 
 const dataObj = JSON.parse(data)
 
 const server = createServer((req, res) => {
-    const path = req.url;
-    console.log(path)
-    if (path === '/' || path === '/overview') {
+    const { pathname, query } = url.parse(req.url, true)
+    
+    if (pathname === '/' || pathname === '/overview') {
         const cardsHtml = dataObj.map(el => replaceTempplate(tempCard, el)).join('')
         const overviewPage = tempOverview.replace('{%PRODUCTS_CARDS%}', cardsHtml)
         
@@ -54,10 +56,15 @@ const server = createServer((req, res) => {
         })
         res.end(overviewPage)
     }
-    else if (path === '/product') {
-        res.end('This is the product page!')
+    else if (pathname === '/product') {
+        res.writeHead(202,{
+            'COntent-type': 'text/html'
+        })
+        const product = dataObj[query.id];
+        const output = replaceTempplate(tempProduct, product)
+        res.end(output);
     }
-    else if (path === '/api') {
+    else if (pathname === '/api') {
         res.writeHead('200', {
             'Content-type': 'application/json',
         })
@@ -69,7 +76,7 @@ const server = createServer((req, res) => {
         })
         res.end('<h1>Page not found!</h1>')
     }
-    res.end('Hello from Node Server!')
+    
 })
 
 server.listen(3000, 'localhost', () => {
