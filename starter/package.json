@@ -1,0 +1,23 @@
+{
+  "name": "complete-node-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AqidaHaidari1/Complete-Node-Project.git"
+  },
+  "author": "Aqida Haidari",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AqidaHaidari1/Complete-Node-Project/issues"
+  },
+  "homepage": "https://github.com/AqidaHaidari1/Complete-Node-Project#readme",
+  "description": "",
+  "dependencies": {
+    "nodemon": "^3.1.9",
+    "slugify": "^1.6.6"
+  }
+}

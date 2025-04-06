@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, readFile, writeFile } from 'fs';
 import { createServer } from 'http'; 
 import url from 'url';
+import slugify from 'slugify';
 import replaceTemplate from './modules/replaceTempplate.js';
 
 
@@ -25,12 +26,15 @@ import replaceTemplate from './modules/replaceTempplate.js';
 
 ///////////////////////////////////SERVER///////////////////////////
 
-const data = readFileSync('./starter/dev-data/data.json', 'utf-8');
-const tempCard = readFileSync('./starter/templates/template-card.html', 'utf-8');
-const tempProduct = readFileSync('./starter/templates/template-product.html', 'utf-8');
-const tempOverview = readFileSync('./starter/templates/template-overview.html', 'utf-8');
+const data = readFileSync('./dev-data/data.json', 'utf-8');
+const tempCard = readFileSync('./templates/template-card.html', 'utf-8');
+const tempProduct = readFileSync('./templates/template-product.html', 'utf-8');
+const tempOverview = readFileSync('./templates/template-overview.html', 'utf-8');
 
 const dataObj = JSON.parse(data)
+
+const slugs = dataObj.map(el => slugify(el.productName, { lower: true }))
+console.log(slugs)
 
 const server = createServer((req, res) => {
     const { pathname, query } = url.parse(req.url, true)
