@@ -50,11 +50,21 @@ readFilePro("./dog.txt")
 const getDogpic = async () => {
 	try {
 		const data = await readFilePro("./dog.txt");
-		const res = await superagent.get(
+		const res1 = superagent.get(
 			`https://dog.ceo/api/breed/${data}/images/random`
 		);
-
-		await writeFilePro("dog-img.txt", res.body.message);
+		const res2 = superagent.get(
+			`https://dog.ceo/api/breed/${data}/images/random`
+		);
+		const res3 = superagent.get(
+			`https://dog.ceo/api/breed/${data}/images/random`
+		);
+		const all = await Promise.all([res1, res2, res3]);
+		const images = all.map((el) => {
+			return el.body.message;
+        });
+        console.log(images)
+		await writeFilePro("dog-img.txt", images.join("\n"));
 	} catch (err) {
 		console.log(err);
 	}
