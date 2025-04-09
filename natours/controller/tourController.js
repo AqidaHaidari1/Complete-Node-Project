@@ -55,3 +55,13 @@ export const checkID = (req, res, next, val) => {
     }
     next()
 }
+
+export const checkBody = (req, res, next) => {
+    if (!req.body.name || !req.body.price) {
+        return res.status(404).json({
+            message: 'Missing Price Or Name!'
+        })
+    }
+
+    next()
+}
