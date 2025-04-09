@@ -38,19 +38,20 @@ export const createTour = (req, res) => {
 };
 
 export const updateTour = (req, res) => {
-	if (req.params.id * 1 > tours.length) {
-		res.status(404).json({
-			err: "not found ID",
-		});
-	}
+	
 	res.status(200).json({ data: "updated!" });
 };
 
 export const deleteTour = (req, res) => {
-	if (req.params.id * 1 > tours.length) {
-		res.status(404).json({
-			err: "not found ID",
-		});
-	}
 	res.status(204).json({ data: "deleted!" });
 };
+
+export const checkID = (req, res, next, val) => {
+    console.log(`the tour id is: ${val}`)
+    if (val * 1 > tours.length) {
+		return	res.status(404).json({
+				err: "not found ID",
+			});
+    }
+    next()
+}
