@@ -7,7 +7,39 @@ export const getAllTours = async (req, res) => {
     const excludedFields = ["page", "sort", "limit", "fields"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
-    const query = Tour.find(queryObj);
+    // Convert query operators
+    const queryStr = JSON.stringify(queryObj);
+    const parsedQuery = JSON.parse(queryStr);
+
+    // Convert keys like 'price[lt]' to { price: { $lt: value } }
+    const mongoQuery = {};
+    for (let key in parsedQuery) {
+      if (key.includes("[")) {
+        const [field, operator] = key.split("[");
+        const cleanOperator = operator.replace("]", "");
+        if (!mongoQuery[field]) mongoQuery[field] = {};
+        mongoQuery[field]["$" + cleanOperator] = parsedQuery[key];
+      } else {
+        mongoQuery[key] = parsedQuery[key];
+      }
+    }
+
+    console.log(mongoQuery);
+    let query = Tour.find();
+    // filtring
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    } else {
+      query.sort("-createdAt");
+    }
+    //limiting
+    if (req.query.fields) {
+      const fields = req.query.fields.split(",").join(" ");
+      query = query.select(fields);
+    } else {
+      query = query.select("-__v");
+    }
 
     // Execute Query
     const tours = await query;
