@@ -12,7 +12,6 @@ import {
   getMonthlyPlan
 } from "../controller/tourController.js";
 
-// router.param('id', checkID)
 router.route("/get-monthly-plan/:year").get(getMonthlyPlan);
 router.route("/get-tours-state").get(getToursStats);
 router.route("/top-5-cheap").get(aliasTopTours, getAllTours);
