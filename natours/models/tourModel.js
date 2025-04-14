@@ -66,7 +66,7 @@ const tourSchema = mongoose.Schema(
     secretTour: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
@@ -87,9 +87,15 @@ tourSchema.pre("save", function (next) {
 
 // query middleware
 tourSchema.pre(/^find/, function (next) {
-    this.find({ secretTour: { $ne: true } });
-    next()
-})
+  this.find({ secretTour: { $ne: true } });
+  next();
+});
+
+// aggregate middleware
+tourSchema.pre("aggregate", function (next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  next();
+});
 
 const Tour = mongoose.model("Tour", tourSchema);
 
