@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 import { configDotenv } from "dotenv";
 configDotenv();
 
+process.on("uncaughtException", (err) => {
+  console.log("UncaughtException");
+  console.log(err);
+  process.exit(1);
+});
+
 import app from "./app.js";
 
 const db_password = process.env.DATABASE_PASSWORD;
@@ -22,6 +28,7 @@ const server = app.listen(port, () => {
 
 process.on("unhandledRejection", () => {
   console.log("Unhandled Rejection!");
+  console.log(err)
   server.close(() => {
     process.exit(1);
   });
