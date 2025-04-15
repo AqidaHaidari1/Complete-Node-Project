@@ -3,6 +3,9 @@ import morgan from "morgan";
 import tourRouter from "./route/tourRoute.js";
 import userRouter from "./route/userRoute.js";
 import { configDotenv } from "dotenv";
+import { globalErrorController } from "./controller/errorController.js";
+import AppError from "./utils/appError.js";
+
 configDotenv();
 
 const app = new express();
@@ -28,13 +31,12 @@ app.use((req, res, next) => {
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
-
 // 404 handler
-app.all("/{*splat}", (req, res) => {
-  res.status(404).json({
-    status: "fail",
-    message: `Cannot find ${req.originalUrl} on this server!`,
-  });
+app.all("/{*splat}", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+
+// global error
+app.use(globalErrorController);
 
 export default app;
