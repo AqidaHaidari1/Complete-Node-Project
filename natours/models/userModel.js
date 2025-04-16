@@ -41,6 +41,10 @@ userScema.pre("save", async function (next) {
   next();
 });
 
+userScema.methods.correctPassword = async function (condidatePassword, userPassword) {
+    return await bcrypt.compare(condidatePassword, userPassword)
+}
+
 const User = mongoose.model("User", userScema);
 
 export default User;
