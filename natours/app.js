@@ -1,6 +1,11 @@
 import express from "express";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
+import hpp from "hpp";
+
 import tourRouter from "./route/tourRoute.js";
 import userRouter from "./route/userRoute.js";
 import { configDotenv } from "dotenv";
@@ -12,6 +17,9 @@ configDotenv();
 const app = new express();
 
 // global middlewares
+
+app.use(helmet());
+
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
@@ -23,7 +31,25 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
-app.use(express.json());
+app.use(express.json({ limit: "10kb" }));
+
+app.use(mongoSanitize());
+
+app.use(xss());
+
+app.use(
+  hpp({
+    whitelist: [
+      "duration",
+      "maxGroupSize",
+      "price",
+      "ratingsAverage",
+      "ratingsQuantity",
+      "difficulty",
+    ],
+  }),
+);
+
 app.use(express.static(`./public`));
 
 app.use((req, res, next) => {
