@@ -11,16 +11,30 @@ const generateToken = (id) => {
     expiresIn: "10d",
   });
 };
+
+const createSendToken = (user, statusCode, res) => {
+  const token = generateToken(user._id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+    ),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
+  res.cookie("jwt", token, cookieOptions);
+  user.password = undefined;
+  res.status(statusCode).json({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
+  });
+};
 export const signUp = catchAsync(async (req, res, next) => {
   const newUser = await User.create(req.body);
 
-  const token = generateToken(newUser._id);
-
-  res.status(201).json({
-    status: "success",
-    token,
-    user: newUser,
-  });
+ createSendToken(newUser, 201, res);
 });
 
 export const login = catchAsync(async (req, res, next) => {
@@ -34,12 +48,7 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Incorrect Email or Password"));
   }
 
-  const token = generateToken(user._id);
-
-  res.status(201).json({
-    status: "success",
-    token,
-  });
+  createSendToken(user, 200, res);
 });
 
 export const protect = catchAsync(async (req, res, next) => {
@@ -152,12 +161,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 
   // 3) Update changedPasswordAt property for the user
   // 4) Log the user in, send JWT
-  const token = generateToken(user._id);
-
-  res.status(201).json({
-    status: "success",
-    token,
-  });
+  createSendToken(user, 201, res);
 });
 
 export const updatePassword = catchAsync(async (req, res, next) => {
@@ -171,10 +175,5 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
 
-  const token = generateToken(user._id);
-
-  res.status(201).json({
-    status: "success",
-    token,
-  });
+  createSendToken(user, 201, res);
 });
