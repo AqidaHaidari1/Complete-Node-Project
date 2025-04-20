@@ -1,5 +1,6 @@
 import express from "express";
 import morgan from "morgan";
+import rateLimit from "express-rate-limit";
 import tourRouter from "./route/tourRoute.js";
 import userRouter from "./route/userRoute.js";
 import { configDotenv } from "dotenv";
@@ -10,10 +11,18 @@ configDotenv();
 
 const app = new express();
 
-//middleware
+// global middlewares
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+const limiter = rateLimit({
+  max: 10000,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many requests from this IP, please try again later",
+});
+app.use("/api", limiter);
+
 app.use(express.json());
 app.use(express.static(`./public`));
 
