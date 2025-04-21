@@ -43,13 +43,13 @@ const tourSchema = mongoose.Schema(
       required: [true, "A tour must have a price"],
     },
     priceDiscount: {
-        type: Number,
-        validate: {
-            validator: function (val) {
-                return val < this.price;
-            },
-        message: 'discount price ({VALUE}) must be less than real price'
-        }
+      type: Number,
+      validate: {
+        validator: function (val) {
+          return val < this.price;
+        },
+        message: "discount price ({VALUE}) must be less than real price",
+      },
     },
     summary: {
       type: String,
@@ -75,6 +75,30 @@ const tourSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: "Point",
+          enum: ["Point"],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
