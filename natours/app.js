@@ -8,6 +8,8 @@ import hpp from "hpp";
 
 import tourRouter from "./route/tourRoute.js";
 import userRouter from "./route/userRoute.js";
+import reviewRouter from './route/reviewRoute.js'
+
 import { configDotenv } from "dotenv";
 import { globalErrorController } from "./controller/errorController.js";
 import AppError from "./utils/appError.js";
@@ -65,6 +67,7 @@ app.use((req, res, next) => {
 //routes
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 // 404 handler
 app.all("/{*splat}", (req, res, next) => {
