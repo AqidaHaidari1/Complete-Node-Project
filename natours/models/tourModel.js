@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
-// import User from './userModel.js'
+import User from './userModel.js'
 
 const tourSchema = mongoose.Schema(
   {
@@ -134,6 +134,14 @@ tourSchema.pre("save", function (next) {
 // query middleware
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v'
+  });
   next();
 });
 

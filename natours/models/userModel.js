@@ -12,7 +12,7 @@ const userScema = mongoose.Schema({
     type: String,
     required: [true, "Please provide your email"],
     unique: true,
-    lowecase: true,
+    lowercase: true,
     validate: [validator.isEmail, "Please provide a valid emai!"],
   },
   photo: String,
@@ -63,6 +63,7 @@ userScema.pre("save", function (next) {
 
 userScema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
+  next();
 });
 
 userScema.methods.correctPassword = async function (
