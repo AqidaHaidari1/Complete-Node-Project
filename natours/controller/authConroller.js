@@ -88,6 +88,7 @@ export const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+// TODO: why does the parameter "user admin role whatever role" changes to an array when you user ...role in argument
 export const restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
