@@ -5,6 +5,7 @@ import AppError from "../utils/appError.js";
 import { promisify } from "util";
 import sentEmail from "../utils/email.js";
 import crypto from "crypto";
+import { validationResult } from "express-validator";
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -34,8 +35,20 @@ const createSendToken = (user, statusCode, res) => {
 export const signUp = catchAsync(async (req, res, next) => {
   const newUser = await User.create(req.body);
 
- createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, res);
 });
+
+export const validateRequest = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const msg = errors
+      .array()
+      .map((err) => err.msg)
+      .join(". ");
+    return next(new AppError(msg, 400));
+  }
+  next();
+};
 
 export const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
