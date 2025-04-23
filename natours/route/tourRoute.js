@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import { protect, restrictTo } from "../controller/authConroller.js";
-
+import reviewRouter from "./reviewRoute.js";
 import {
   getAllTours,
   getTour,
@@ -9,9 +9,16 @@ import {
   updateTour,
   deleteTour,
   aliasTopTours,
-    getToursStats,
+  getToursStats,
   getMonthlyPlan,
 } from "../controller/tourController.js";
+
+// nested routes
+// router
+//   .route("/:tourId/reviews")
+//   .post(protect, restrictTo("user"), createReview);
+
+router.use("/:tourId/reviews", reviewRouter);
 
 router.route("/get-monthly-plan/:year").get(getMonthlyPlan);
 router.route("/get-tours-state").get(getToursStats);

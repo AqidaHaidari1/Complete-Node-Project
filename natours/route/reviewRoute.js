@@ -1,8 +1,9 @@
 import express from "express";
 
-const router = express.Router();
 import { createReview, getReview } from "../controller/reviewsController.js";
 import { restrictTo, protect } from "../controller/authConroller.js";
+
+const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
