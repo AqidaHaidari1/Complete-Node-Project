@@ -114,11 +114,12 @@ tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
 });
 
-tourSchema.virtual('reviews', {
-  ref: 'Review',
-  foreignField: 'tour',
-  localField: '_id'
-})
+
+tourSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id",
+});
 // document middleware
 tourSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
@@ -141,11 +142,12 @@ tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   next();
 });
-
+// TODO: try to understand teh different between this.populate and tourSchema.virual
 tourSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'guides',
-    select: '-__v'
+    path: "guides",
+    // TODO: check if sensitive fields are sent in this request such as resettoken and password and etc..., and only send those fields that are actually needed, send minimal data
+    select: "-__v",
   });
   next();
 });

@@ -9,7 +9,7 @@ process.on("uncaughtException", (err) => {
 });
 
 import app from "./app.js";
-
+// TODO: if the env variables do not exist, then a message should be shown on the terminal and the server should stop
 const db_password = process.env.DATABASE_PASSWORD;
 const db = process.env.DATABASE.replace("<PASSWORD>", db_password);
 
