@@ -1,6 +1,6 @@
 import Review from "../models/reviewTour.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { deleteOne } from "./handlerFactory.js";
+import { createOne, deleteOne } from "./handlerFactory.js";
 
 export const getReview = catchAsync(async (req, res, next) => {
   let filter = {};
@@ -19,17 +19,11 @@ export const getReview = catchAsync(async (req, res, next) => {
   });
 });
 
-export const createReview = catchAsync(async (req, res, next) => {
-  if (!req.body.user) req.body.user = req.user.id;
-  if (!req.body.tour) req.body.tour = req.params.tourId;
-  const reviews = await Review.create(req.body);
-
-  res.status(201).json({
-    status: "success",
-    data: {
-      reviews,
-    },
-  });
-});
+export const setUserAndTourIds =(req, res, next) => {
+    if (!req.body.user) req.body.user = req.user.id;
+    if (!req.body.tour) req.body.tour = req.params.tourId;
+    next()
+}
+export const createReview = createOne(Review)
 
 export const deleteReview = deleteOne(Review);
