@@ -3,6 +3,7 @@ import APIFeatures from "../utils/apiFeatures.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import User from "../models/userModel.js";
+import { deleteOne } from "./handlerFactory.js";
 
 export const aliasTopTours = (req, res, next) => {
   req.query.limit = "5";
@@ -120,13 +121,7 @@ export const updateTour = catchAsync(async (req, res, next) => {
   res.status(200).json({ data: tour, message: "Updated" });
 });
 
-export const deleteTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id);
-  if (!tour) {
-    return next(new AppError("No tour found with that ID", 404));
-  }
-  res.status(204);
-});
+export const deleteTour = deleteOne(Tour)
 
 export const checkID = (req, res, next, val) => {
   // console.log(`the tour id is: ${val}`)
