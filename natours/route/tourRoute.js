@@ -21,13 +21,18 @@ import {
 router.use("/:tourId/reviews", reviewRouter);
 
 router.route("/get-monthly-plan/:year").get(getMonthlyPlan);
-router.route("/get-tours-state").get(getToursStats);
+router
+  .route("/get-tours-state")
+  .get(protect, restrictTo("admin", "lead-guide", "guide"), getToursStats);
 router.route("/top-5-cheap").get(aliasTopTours, getAllTours);
-router.route("/").get(protect, getAllTours).post(createTour);
+router
+  .route("/")
+  .get(getAllTours)
+  .post(protect, restrictTo("admin", "lead-guide"), createTour);
 router
   .route("/:id")
   .get(getTour)
-  .patch(updateTour)
+  .patch(protect, restrictTo("admin", "lead-guide"), updateTour)
   .delete(protect, restrictTo("admin", "lead-guide"), deleteTour);
 
 export default router;

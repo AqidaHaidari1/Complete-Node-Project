@@ -1,6 +1,6 @@
 import Review from "../models/reviewTour.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { createOne, deleteOne, getAll, getOne } from "./handlerFactory.js";
+import { createOne, deleteOne, getAll, getOne, updateOne } from "./handlerFactory.js";
 
 export const getAllReviews = getAll(Review);
 
@@ -14,3 +14,5 @@ export const createReview = createOne(Review);
 export const deleteReview = deleteOne(Review);
 
 export const getReview = getOne(Review);
+
+export const updateReview = updateOne(Review)
