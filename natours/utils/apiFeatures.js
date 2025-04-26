@@ -9,11 +9,20 @@ class APIFeatures {
     const excludedFields = ["page", "sort", "limit", "fields"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
-    // 1B) Advanced filtering
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    // Convert price[lt]=1000 into price: { $lt: 1000 }
+    const formattedQuery = {};
+    for (const key in queryObj) {
+      if (key.includes("[")) {
+        const [field, operator] = key.split("[");
+        const op = operator.replace("]", ""); // remove the closing bracket
+        if (!formattedQuery[field]) formattedQuery[field] = {};
+        formattedQuery[field][`$${op}`] = queryObj[key];
+      } else {
+        formattedQuery[key] = queryObj[key];
+      }
+    }
 
-    this.query = this.query.find(JSON.parse(queryStr));
+    this.query = this.query.find(formattedQuery);
 
     return this;
   }

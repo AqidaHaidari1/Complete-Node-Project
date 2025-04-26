@@ -62,21 +62,20 @@ export const getAll = (Model) =>
     let filter = {};
     if (req.params.tourId) filter = { tour: req.params.tourId };
 
-    const apiFeatures = new APIFeatures(Model.find(filter), req.query)
+    const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
       .limitFields()
       .paginate();
-    // Execute Query
-    const docs = await apiFeatures.query;
 
-    //Send Response
+    const doc = await features.query;
+
+    // SEND RESPONSE
     res.status(200).json({
       status: "success",
-      currentTime: req.currentTime,
-      result: docs.length,
+      results: doc.length,
       data: {
-        data: docs,
+        data: doc,
       },
     });
   });
