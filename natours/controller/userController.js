@@ -49,6 +49,10 @@ export const deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
+export const getMe = (req, res, next) => {
+  req.params.id= req.user.id
+  next()
+}
 export const getAllUsers = getAll(User);
 export const getUser = getOne(User);
 export const updateUser = updateOne(User);
