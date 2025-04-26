@@ -1,7 +1,13 @@
 import User from "../models/userModel.js";
 import AppError from "../utils/appError.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { createOne, deleteOne, updateOne } from "./handlerFactory.js";
+import {
+  createOne,
+  deleteOne,
+  getAll,
+  getOne,
+  updateOne,
+} from "./handlerFactory.js";
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -35,27 +41,17 @@ export const updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-export const deleteMe = catchAsync(async(req, res, next) => {
-	await User.findByIdAndUpdate(req.user.id, { active: false })
-	res.status(204).json({
-		status: 'success',
-		data: null
-	})
-})
-
-export const getAllUsers = (req, res) => {
-  res.status(500).json({
-    status: "err",
-    message: "This rout not yet defined!",
+export const deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+  res.status(204).json({
+    status: "success",
+    data: null,
   });
-};
-export const getUser = (req, res) => {
-  res.status(500).json({
-    status: "err",
-    message: "This rout not yet defined!",
-  });
-};
-export const updateUser = updateOne(User)
-export const deleteUser = deleteOne(User)
+});
 
-export const createUser = createOne(User)
+export const getAllUsers = getAll(User);
+export const getUser = getOne(User);
+export const updateUser = updateOne(User);
+export const deleteUser = deleteOne(User);
+
+export const createUser = createOne(User);

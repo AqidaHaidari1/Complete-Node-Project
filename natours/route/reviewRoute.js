@@ -1,7 +1,8 @@
 import express from "express";
 
 import {
-  createReview,
+    createReview,
+    getAllReviews,
   getReview,
     deleteReview,
   setUserAndTourIds
@@ -12,8 +13,8 @@ const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
-  .get(getReview)
+  .get(getAllReviews)
   .post(protect, restrictTo("user"), setUserAndTourIds, createReview);
-router.route("/:id").delete(deleteReview);
+router.route("/:id").get(getReview).delete(deleteReview);
 
 export default router;

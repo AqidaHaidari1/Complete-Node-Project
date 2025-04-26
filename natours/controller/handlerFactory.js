@@ -1,5 +1,6 @@
 import { catchAsync } from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
+import APIFeatures from "../utils/apiFeatures.js";
 
 export const deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -37,4 +38,45 @@ export const updateOne = (Model) =>
     }
 
     res.status(200).json({ data: doc, message: "Updated" });
+  });
+
+export const getOne = (Model, popOptions) =>
+  catchAsync(async (req, res, next) => {
+    let query = Model.findById(req.params.id);
+    if (popOptions) query.populate(popOptions);
+    const doc = await query;
+    if (!doc) {
+      return next(new AppError("No tour found with that ID", 404));
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        data: doc,
+      },
+    });
+  });
+
+export const getAll = (Model) =>
+  catchAsync(async (req, res, next) => {
+    let filter = {};
+    if (req.params.tourId) filter = { tour: req.params.tourId };
+
+    const apiFeatures = new APIFeatures(Model.find(filter), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    // Execute Query
+    const docs = await apiFeatures.query;
+
+    //Send Response
+    res.status(200).json({
+      status: "success",
+      currentTime: req.currentTime,
+      result: docs.length,
+      data: {
+        data: docs,
+      },
+    });
   });

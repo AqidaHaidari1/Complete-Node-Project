@@ -1,29 +1,16 @@
 import Review from "../models/reviewTour.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { createOne, deleteOne } from "./handlerFactory.js";
+import { createOne, deleteOne, getAll, getOne } from "./handlerFactory.js";
 
-export const getReview = catchAsync(async (req, res, next) => {
-  let filter = {};
-  if (req.params.tourId) filter = { tour: req.params.tourId };
-  const reviews = await Review.find(filter);
+export const getAllReviews = getAll(Review);
 
-  if (!reviews) {
-    return next(new AppError("No tour found!", 404));
-  }
-
-  res.status(200).json({
-    status: "success",
-    data: {
-      reviews,
-    },
-  });
-});
-
-export const setUserAndTourIds =(req, res, next) => {
-    if (!req.body.user) req.body.user = req.user.id;
-    if (!req.body.tour) req.body.tour = req.params.tourId;
-    next()
-}
-export const createReview = createOne(Review)
+export const setUserAndTourIds = (req, res, next) => {
+  if (!req.body.user) req.body.user = req.user.id;
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  next();
+};
+export const createReview = createOne(Review);
 
 export const deleteReview = deleteOne(Review);
+
+export const getReview = getOne(Review);
