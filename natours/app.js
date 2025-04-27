@@ -1,3 +1,5 @@
+import path from "path";
+import { fileURLToPath } from "url";
 import express from "express";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
@@ -8,7 +10,7 @@ import hpp from "hpp";
 
 import tourRouter from "./route/tourRoute.js";
 import userRouter from "./route/userRoute.js";
-import reviewRouter from './route/reviewRoute.js'
+import reviewRouter from "./route/reviewRoute.js";
 
 import { configDotenv } from "dotenv";
 import { globalErrorController } from "./controller/errorController.js";
@@ -18,6 +20,10 @@ configDotenv();
 
 const app = new express();
 
+app.set("view engine", "pug");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+app.set("views", path.join(__dirname, "views"));
 // global middlewares
 
 app.use(helmet());
@@ -32,7 +38,6 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again later",
 });
 app.use("/api", limiter);
-
 
 // TODO: make modificaiton to this line of code so this middleware only runs on POST and PUT, PATCH request
 app.use(express.json({ limit: "10kb" }));
@@ -67,6 +72,10 @@ app.use((req, res, next) => {
 });
 
 //routes
+app.get("/", (req, res) => {
+  res.status(200).render("base");
+});
+
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
