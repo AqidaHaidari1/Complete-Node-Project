@@ -11,10 +11,12 @@ import hpp from "hpp";
 import tourRouter from "./route/tourRoute.js";
 import userRouter from "./route/userRoute.js";
 import reviewRouter from "./route/reviewRoute.js";
+import viewRouter from './route/viewRoutes.js'
 
 import { configDotenv } from "dotenv";
 import { globalErrorController } from "./controller/errorController.js";
 import AppError from "./utils/appError.js";
+
 
 configDotenv();
 
@@ -72,13 +74,8 @@ app.use((req, res, next) => {
 });
 
 //routes
-app.get("/", (req, res) => {
-  res.status(200).render("base", {
-    tour: "The Forest Hicker",
-    user: "John",
-  });
-});
 
+app.use('/', viewRouter)
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
