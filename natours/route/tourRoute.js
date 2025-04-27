@@ -11,6 +11,7 @@ import {
   aliasTopTours,
   getToursStats,
   getMonthlyPlan,
+  getToursWithin,
 } from "../controller/tourController.js";
 
 // nested routes
@@ -25,6 +26,11 @@ router
   .route("/get-tours-state")
   .get(protect, restrictTo("admin", "lead-guide", "guide"), getToursStats);
 router.route("/top-5-cheap").get(aliasTopTours, getAllTours);
+
+router
+  .route("/tours-within/:distance/center/:latlng/unit/:unit")
+  .get(getToursWithin);
+
 router
   .route("/")
   .get(getAllTours)
