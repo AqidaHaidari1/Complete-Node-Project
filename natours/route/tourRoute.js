@@ -12,6 +12,7 @@ import {
   getToursStats,
   getMonthlyPlan,
   getToursWithin,
+  getDistances,
 } from "../controller/tourController.js";
 
 // nested routes
@@ -30,6 +31,7 @@ router.route("/top-5-cheap").get(aliasTopTours, getAllTours);
 router
   .route("/tours-within/:distance/center/:latlng/unit/:unit")
   .get(getToursWithin);
+router.route("/distances/:latlng/unit/:unit").get(getDistances);
 
 router
   .route("/")
