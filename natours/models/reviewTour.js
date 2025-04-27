@@ -30,30 +30,6 @@ const reviewSchema = mongoose.Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
 
-reviewSchema.statics.calcAverageRatings = async function (tourId) {
-  const stats = await this.aggregate([
-    {
-      $match: { tour: tourId },
-    },
-    {
-      $group: {
-        _id: "$tour",
-        nRating: { $sum: 1 },
-        avgRating: { $avg: "$rating" },
-      },
-    },
-  ]);
-
-  await Tour.findByIdAndUpdate(tourId, {
-    ratingsAverage: stats[0].avgRating,
-    ratingsQuantity: stats[0].nRating,
-  });
-};
-
-reviewSchema.post("save", function () {
-  this.constructor.calcAverageRatings(this.tour);
-});
-
 reviewSchema.pre(/^find/, function (next) {
   //   this.populate({
   //     path: "tour",
@@ -69,6 +45,50 @@ reviewSchema.pre(/^find/, function (next) {
   });
 
   next();
+});
+
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: "$tour",
+        nRating: { $sum: 1 },
+        avgRating: { $avg: "$rating" },
+      },
+    },
+  ]);
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsAverage: stats[0].avgRating,
+      ratingsQuantity: stats[0].nRating,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsAverage: 4.5,
+      ratingsQuantity: 0,
+    });
+  }
+};
+
+reviewSchema.post("save", function () {
+  this.constructor.calcAverageRatings(this.tour);
+});
+
+// run calcAverageRatings function for update and delete review
+// findByIdAndUpdate
+// findByIdAndDelete
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.r = await this.findOne();
+  // console.log(this.r);
+  next();
+});
+
+reviewSchema.post(/^findOneAnd/, async function () {
+  // await this.findOne(); does NOT work here, query has already executed
+  await this.r.constructor.calcAverageRatings(this.r.tour);
 });
 
 const Review = mongoose.model("Review", reviewSchema);
