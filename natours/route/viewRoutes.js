@@ -1,9 +1,9 @@
 import express from "express";
-import { getTour, getTours } from "../controller/viewsController.js";
+import { getTour, getOverview } from "../controller/viewsController.js";
 
 const router = express.Router();
 
-router.get("/overview", getTours);
+router.get("/", getOverview);
 
 router.get("/tour", getTour);
 
