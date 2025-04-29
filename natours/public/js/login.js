@@ -1,4 +1,4 @@
-const login = async(email, password) => {
+const login = async (email, password) => {
   try {
     const res = await axios({
       method: "POST",
@@ -8,11 +8,17 @@ const login = async(email, password) => {
         password,
       },
     });
-    console.log(res);
+    if (res.data.status === "success") {
+      alert("login was successfly");
+      window.setTimeout(() => {
+        location.assign("/");
+      }, 1500);
+    }
   } catch (err) {
-    console.log(err.response.data);
+    alert(err.response.data.message);
   }
 };
+
 document.querySelector(".form").addEventListener("submit", (e) => {
   e.preventDefault();
   const email = document.getElementById("email").value;
