@@ -16,7 +16,7 @@ import viewRouter from './route/viewRoutes.js'
 import { configDotenv } from "dotenv";
 import { globalErrorController } from "./controller/errorController.js";
 import AppError from "./utils/appError.js";
-
+import cookieParser from "cookie-parser";
 
 configDotenv();
 
@@ -43,6 +43,7 @@ app.use("/api", limiter);
 
 // TODO: make modificaiton to this line of code so this middleware only runs on POST and PUT, PATCH request
 app.use(express.json({ limit: "10kb" }));
+app.use(cookieParser())
 
 // app.use(mongoSanitize());
 
@@ -64,12 +65,8 @@ app.use(
 app.use(express.static(`./public`));
 
 app.use((req, res, next) => {
-  console.log("hello from middleware");
-  next();
-});
-app.use((req, res, next) => {
   req.currentTime = new Date().toISOString();
-  console.log(req.currentTime);
+  console.log(req.cookies);
   next();
 });
 
