@@ -2,12 +2,13 @@ import express from "express";
 const router = express.Router();
 
 import {getAllUsers, getUser, createUser, updateUser, deleteUser, updateMe, deleteMe, getMe} from '../controller/userController.js'
-import { signUp, login, forgotPassword, resetPassword, protect, updatePassword, validateRequest, restrictTo } from "../controller/authConroller.js";
+import { signUp, login, forgotPassword, resetPassword, protect, updatePassword, validateRequest, restrictTo, logout } from "../controller/authConroller.js";
 
 import validateLogin from "../validators/auth.js";
 
 router.route("/signup").post(signUp);
 router.route("/login").post(validateLogin, validateRequest, login);
+router.get("/logout", logout);
 router.route("/forgotPassword").post(forgotPassword);
 router.route("/resetPassword/:token").patch(resetPassword);
 
