@@ -3,16 +3,18 @@ import {
   getTour,
   getOverview,
   getLoginForm,
+  getAccount,
 } from "../controller/viewsController.js";
-import { isLoggedIn } from "../controller/authConroller.js";
+import { isLoggedIn, protect } from "../controller/authConroller.js";
 
 const router = express.Router();
 
 router.use(isLoggedIn)
 
-router.get("/", getOverview);
+router.get("/",isLoggedIn, getOverview);
 
-router.get("/tour/:slug", getTour);
-router.get('/login', getLoginForm)
+router.get("/tour/:slug",isLoggedIn, getTour);
+router.get("/login", isLoggedIn, getLoginForm);
+router.get("/me",protect, getAccount);
 
 export default router;
