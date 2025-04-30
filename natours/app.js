@@ -43,6 +43,7 @@ app.use("/api", limiter);
 
 // TODO: make modificaiton to this line of code so this middleware only runs on POST and PUT, PATCH request
 app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({extended: true, limit: '10kb'}))
 app.use(cookieParser())
 
 // app.use(mongoSanitize());
