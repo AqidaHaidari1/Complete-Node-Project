@@ -12,6 +12,7 @@ import tourRouter from "./route/tourRoute.js";
 import userRouter from "./route/userRoute.js";
 import reviewRouter from "./route/reviewRoute.js";
 import viewRouter from './route/viewRoutes.js'
+import bookingRouter from './route/bookingRoutes.js'
 
 import { configDotenv } from "dotenv";
 import { globalErrorController } from "./controller/errorController.js";
@@ -77,6 +78,7 @@ app.use('/', viewRouter)
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/booking", bookingRouter);
 
 // 404 handler
 app.all("/{*splat}", (req, res, next) => {
