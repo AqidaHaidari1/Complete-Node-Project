@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 
-import {getAllUsers, getUser, createUser, updateUser, deleteUser, updateMe, deleteMe, getMe, uploadUserPhoto} from '../controller/userController.js'
+import {getAllUsers, getUser, createUser, updateUser, deleteUser, updateMe, deleteMe, getMe, uploadUserPhoto, resizeUserPhoto} from '../controller/userController.js'
 import { signUp, login, forgotPassword, resetPassword, protect, updatePassword, validateRequest, restrictTo, logout } from "../controller/authConroller.js";
 
 import validateLogin from "../validators/auth.js";
@@ -16,7 +16,7 @@ router.use(protect)
 router.route("/updateMypassword").patch(updatePassword);
 router.get('/me',getMe, getUser)
 
-router.route("/updateMe").patch(uploadUserPhoto, updateMe);
+router.route("/updateMe").patch(uploadUserPhoto,resizeUserPhoto, updateMe);
 router.route("/deleteMe").delete(deleteMe);
 
 router.use(restrictTo);
