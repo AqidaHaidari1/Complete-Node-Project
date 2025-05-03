@@ -2,6 +2,7 @@ import { catchAsync } from "../utils/catchAsync.js";
 import Tour from "../models/tourModel.js";
 import AppError from "../utils/appError.js";
 import User from "../models/userModel.js";
+import Booking from "../models/bookingModel.js";
 
 export const getOverview = catchAsync(async (req, res, next) => {
   const tours = await Tour.find();
@@ -31,7 +32,7 @@ export const getTour = catchAsync(async (req, res, next) => {
 
   res.status(200).render("tour", {
     title: "The Forest Hicker Tour",
-    tour
+    tour,
   });
 });
 
@@ -53,18 +54,31 @@ export const getAccount = catchAsync(async (req, res, next) => {
 });
 
 export const updateUserData = catchAsync(async (req, res) => {
-
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, {
-    name: req.body.name,
-    email: req.body.email
-  },
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+    },
     {
       new: true,
-      runValidators: true
-    })
-  
+      runValidators: true,
+    },
+  );
+
   res.status(200).render("account", {
     title: "Your Account",
     user: updatedUser,
   });
-})
+});
+
+export const getMyTours = catchAsync(async (req, res, next) => {
+  const booking = await Booking.find({ user: req.user.id });
+
+  const tourIds = booking.map((el) => el.tour);
+  const tours = await Tour.find({ _id: { $in: tourIds } });
+  res.status(200).render("overview", {
+    title: "My Bookings",
+    tours,
+  });
+});
