@@ -3,6 +3,13 @@ import Tour from "../models/tourModel.js";
 import Booking from "../models/bookingModel.js";
 import AppError from "../utils/appError.js";
 import { catchAsync } from "../utils/catchAsync.js";
+import {
+  deleteOne,
+  createOne,
+  updateOne,
+  getOne,
+  getAll,
+} from "./handlerFactory.js";
 
 const stripe = new Stripe(
   "sk_test_51RJsuQI7WqiqaOpBHYvrbWeTdDYMlP261rYRDVpAjvSXAMoUEz4kA3XGTgXUq0upW4apmLIhsppwOOlKHc4fzgqM000Os6B4nJ",
@@ -41,12 +48,17 @@ export const getCheckoutSession = catchAsync(async (req, res, next) => {
   });
 });
 
-
-export const createBookingCheckout = catchAsync( async(req, res, next) => {
+export const createBookingCheckout = catchAsync(async (req, res, next) => {
   const { user, tour, price } = req.query;
 
-  if (!user && !tour && !price) return next()
-  await Booking.create({ tour, user, price })
-  
-    res.redirect(req.originalUrl.split('?')[0])
-})
+  if (!user && !tour && !price) return next();
+  await Booking.create({ tour, user, price });
+
+  res.redirect(req.originalUrl.split("?")[0]);
+});
+
+export const createBooking = createOne(Booking);
+export const getBooking = getOne(Booking);
+export const getAllBookings = getAll(Booking);
+export const updateBooking = updateOne(Booking);
+export const deleteBooking = deleteOne(Booking);
