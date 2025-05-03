@@ -7,12 +7,13 @@ import {
   updateUserData,
 } from "../controller/viewsController.js";
 import { isLoggedIn, protect } from "../controller/authConroller.js";
+import { createBookingCheckout } from "../controller/bookingController.js";
 
 const router = express.Router();
 
 router.use(isLoggedIn)
 
-router.get("/",isLoggedIn, getOverview);
+router.get("/",createBookingCheckout, isLoggedIn, getOverview);
 
 router.get("/tour/:slug",isLoggedIn, getTour);
 router.get("/login", isLoggedIn, getLoginForm);
