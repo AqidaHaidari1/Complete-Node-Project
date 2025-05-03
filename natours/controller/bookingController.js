@@ -1,7 +1,7 @@
 import Stripe from "stripe";
+import dotenv from "dotenv";
 import Tour from "../models/tourModel.js";
 import Booking from "../models/bookingModel.js";
-import AppError from "../utils/appError.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import {
   deleteOne,
@@ -11,9 +11,9 @@ import {
   getAll,
 } from "./handlerFactory.js";
 
-const stripe = new Stripe(
-  "sk_test_51RJsuQI7WqiqaOpBHYvrbWeTdDYMlP261rYRDVpAjvSXAMoUEz4kA3XGTgXUq0upW4apmLIhsppwOOlKHc4fzgqM000Os6B4nJ",
-);
+dotenv.config();
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const getCheckoutSession = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.tourId);
