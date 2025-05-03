@@ -21,7 +21,12 @@ export const getTour = catchAsync(async (req, res, next) => {
   }
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' https://api.mapbox.com; style-src 'self' https://fonts.googleapis.com https://api.mapbox.com; font-src https://fonts.gstatic.com; img-src 'self' data:",
+    "default-src 'self' https: http: ws: blob:; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://api.mapbox.com blob:; " +
+      "connect-src 'self' ws: http: https:; " +
+      "worker-src 'self' blob:; " +
+      "style-src 'self' 'unsafe-inline' https:; " +
+      "img-src 'self' data: blob: https:;",
   );
 
   res.status(200).render("tour", {
