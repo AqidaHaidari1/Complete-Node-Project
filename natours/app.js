@@ -7,6 +7,7 @@ import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
 import hpp from "hpp";
+import compression from "compression";
 
 import tourRouter from "./route/tourRoute.js";
 import userRouter from "./route/userRoute.js";
@@ -66,6 +67,7 @@ app.use(
 
 app.use(express.static(`./public`));
 
+app.use(compression())
 app.use((req, res, next) => {
   req.currentTime = new Date().toISOString();
   next();

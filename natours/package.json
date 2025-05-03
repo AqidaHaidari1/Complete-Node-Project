@@ -10,7 +10,7 @@
     "tours:delete": "node dev-data/data/import-dev-data.js --delete",
     "debug": "ndb server.js",
     "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
-    "build:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
+    "build:js": "parcel build ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
   },
   "author": "Aqida Haiari",
   "license": "ISC",
@@ -20,6 +20,7 @@
     "a": "^3.0.1",
     "axios": "^1.9.0",
     "bcryptjs": "^3.0.2",
+    "compression": "^1.8.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
