@@ -8,6 +8,7 @@ import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
 import hpp from "hpp";
 import compression from "compression";
+import cors from 'cors'
 
 import tourRouter from "./route/tourRoute.js";
 import userRouter from "./route/userRoute.js";
@@ -29,6 +30,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 app.set("views", path.join(__dirname, "views"));
 // global middlewares
+
+app.use(cors())
 
 app.use(helmet());
 
