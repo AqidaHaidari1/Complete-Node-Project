@@ -5,16 +5,18 @@ import AppError from "../utils/appError.js";
 import { promisify } from "util";
 import sentEmail from "../utils/email.js";
 import crypto from "crypto";
+import useragent from "useragent";
 import { validationResult } from "express-validator";
+import Session from "../models/sessionModel.js";
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, sessionId) => {
+  return jwt.sign({ id, sessionId }, process.env.JWT_SECRET, {
     expiresIn: "10d",
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
-  const token = generateToken(user._id);
+const createSendToken = (user, statusCode, res, sessionId) => {
+  const token = generateToken(user._id, sessionId);
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
@@ -61,14 +63,24 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Incorrect Email or Password"));
   }
 
-  createSendToken(user, 200, res);
+  const deviceInfo = useragent.parse(req.headers["user-agent"]).toString();
+  req.session.userId = user._id;
+  const sessionId = req.session.id;
+  await Session.create({
+    userId: user.id,
+    sessionId: sessionId,
+    device: deviceInfo,
+  });
+
+  createSendToken(user, 200, res, sessionId);
 });
 
-export const logout = (req, res) => {
+export const logout = async (req, res) => {
   res.cookie("jwt", "loggedout", {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
+  await Session.deleteOne({ sessionId: req.session.id });
   res.status(200).json({ status: "success" });
 };
 
@@ -90,6 +102,16 @@ export const protect = catchAsync(async (req, res, next) => {
   // 2- verififcation token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
+  const validSession = await Session.findOne({
+    userId: decoded.id,
+    sessionId: decoded.sessionId,
+  });
+
+  if (!validSession) {
+    return next(
+      new AppError("Session expired or invalid. Please log in again.", 401),
+    );
+  }
   // 3- check if still user exist
   const freshUser = await User.findById(decoded.id);
   if (!freshUser) {
@@ -130,6 +152,15 @@ export const isLoggedIn = async (req, res, next) => {
 
       // 3) Check if user changed password after the token was issued
       if (currentUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
+
+      const validSession = await Session.findOne({
+        userId: decoded.id,
+        sessionId: decoded.sessionId,
+      });
+
+      if (!validSession) {
         return next();
       }
 

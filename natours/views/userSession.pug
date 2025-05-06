@@ -1,0 +1,26 @@
+extends base
+
+block content
+  .main
+    .container
+      h2.heading-secondary.ma-bt-md= user.name
+      h3.heading-tertiary.ma-bt-lg Logged-in Devices
+
+      
+        // Logout all others button (before current session)
+        if sessions.length > 1
+            form(method='POST', action='/logout-all-others', style='margin-bottom: 2rem; text-align: right;')
+                button.btn.btn--small.btn--danger(type='submit') Logout All Other Devices
+      .overview-box
+        .overview-box__group
+          each session in sessions
+            .overview-box__detail(style=`background: ${session.sessionId == currentSessionId ? '#f0fdf4' : '#fff'}; border: 1px solid #ddd; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;`)
+              .overview-box__text
+                span.overview-box__label(style='font-weight: 600; color: #555')= session.sessionId == currentSessionId ? 'Current Device:' : 'Other Device:'
+                br
+                span(style='font-size: 1.4rem; color: #333')= session.device
+
+              if session.sessionId != currentSessionId
+                form.logout-form(method='POST', action='/logout-device')
+                  input(type='hidden', name='sessionId', value=session.sessionId)
+                  button.btn.btn--small(type='submit') Logout

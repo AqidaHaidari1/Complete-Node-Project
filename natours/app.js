@@ -8,13 +8,15 @@ import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
 import hpp from "hpp";
 import compression from "compression";
-import cors from 'cors'
+import cors from "cors";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 
 import tourRouter from "./route/tourRoute.js";
 import userRouter from "./route/userRoute.js";
 import reviewRouter from "./route/reviewRoute.js";
-import viewRouter from './route/viewRoutes.js'
-import bookingRouter from './route/bookingRoutes.js'
+import viewRouter from "./route/viewRoutes.js";
+import bookingRouter from "./route/bookingRoutes.js";
 
 import { configDotenv } from "dotenv";
 import { globalErrorController } from "./controller/errorController.js";
@@ -31,7 +33,25 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.set("views", path.join(__dirname, "views"));
 // global middlewares
 
-app.use(cors())
+const db_password = process.env.DATABASE_PASSWORD;
+const db = process.env.DATABASE.replace("<PASSWORD>", db_password);
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: db,
+      collectionName: "sessions",
+    }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  }),
+);
+
+app.use(cors());
 
 app.use(helmet());
 
@@ -48,8 +68,8 @@ app.use("/api", limiter);
 
 // TODO: make modificaiton to this line of code so this middleware only runs on POST and PUT, PATCH request
 app.use(express.json({ limit: "10kb" }));
-app.use(express.urlencoded({extended: true, limit: '10kb'}))
-app.use(cookieParser())
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+app.use(cookieParser());
 
 // app.use(mongoSanitize());
 
@@ -70,7 +90,7 @@ app.use(
 
 app.use(express.static(`./public`));
 
-app.use(compression())
+app.use(compression());
 app.use((req, res, next) => {
   req.currentTime = new Date().toISOString();
   next();
@@ -78,7 +98,7 @@ app.use((req, res, next) => {
 
 //routes
 
-app.use('/', viewRouter)
+app.use("/", viewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
