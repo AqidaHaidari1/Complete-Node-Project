@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 
 const sessionSchema = new mongoose.Schema({
-  userId: mongoose.Schema.Types.ObjectId,
+  userId: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User'
+  },
   sessionId: String,
   device: String,
   createdAt: { type: Date, default: Date.now },

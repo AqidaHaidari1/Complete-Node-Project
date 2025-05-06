@@ -33,21 +33,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.set("views", path.join(__dirname, "views"));
 // global middlewares
 
-const db_password = process.env.DATABASE_PASSWORD;
-const db = process.env.DATABASE.replace("<PASSWORD>", db_password);
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: db,
-      collectionName: "sessions",
-    }),
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    },
   }),
 );
 

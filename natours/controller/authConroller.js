@@ -67,7 +67,7 @@ export const login = catchAsync(async (req, res, next) => {
   req.session.userId = user._id;
   const sessionId = req.session.id;
   await Session.create({
-    userId: user.id,
+    userId: user._id,
     sessionId: sessionId,
     device: deviceInfo,
   });
