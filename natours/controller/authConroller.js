@@ -9,14 +9,14 @@ import useragent from "useragent";
 import { validationResult } from "express-validator";
 import Session from "../models/sessionModel.js";
 
-const generateToken = (id, sessionId) => {
-  return jwt.sign({ id, sessionId }, process.env.JWT_SECRET, {
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: "10d",
   });
 };
 
-const createSendToken = (user, statusCode, res, sessionId) => {
-  const token = generateToken(user._id, sessionId);
+const createSendToken = async(user, statusCode,req, res) => {
+  const token = generateToken(user._id);
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
@@ -25,6 +25,15 @@ const createSendToken = (user, statusCode, res, sessionId) => {
   };
   if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
   res.cookie("jwt", token, cookieOptions);
+
+  const deviceInfo = useragent.parse(req.headers["user-agent"]).toString();
+
+  await Session.create({
+    userId: user._id,
+    token: token,
+    device: deviceInfo,
+  });
+
   user.password = undefined;
   res.status(statusCode).json({
     status: "success",
@@ -37,7 +46,7 @@ const createSendToken = (user, statusCode, res, sessionId) => {
 export const signUp = catchAsync(async (req, res, next) => {
   const newUser = await User.create(req.body);
 
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201,req, res);
 });
 
 export const validateRequest = (req, res, next) => {
@@ -63,16 +72,7 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Incorrect Email or Password"));
   }
 
-  const deviceInfo = useragent.parse(req.headers["user-agent"]).toString();
-  req.session.userId = user._id;
-  const sessionId = req.session.id;
-  await Session.create({
-    userId: user._id,
-    sessionId: sessionId,
-    device: deviceInfo,
-  });
-
-  createSendToken(user, 200, res, sessionId);
+  createSendToken(user, 200,req, res);
 });
 
 export const logout = async (req, res) => {
@@ -80,7 +80,7 @@ export const logout = async (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
-  await Session.deleteOne({ sessionId: req.session.id });
+  await Session.deleteOne({ token: req.token });
   res.status(200).json({ status: "success" });
 };
 
@@ -101,10 +101,10 @@ export const protect = catchAsync(async (req, res, next) => {
   }
   // 2- verififcation token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
+console.log(decoded, 'decod')
   const validSession = await Session.findOne({
     userId: decoded.id,
-    sessionId: decoded.sessionId,
+    token: token,
   });
 
   if (!validSession) {
@@ -131,7 +131,7 @@ export const protect = catchAsync(async (req, res, next) => {
   }
   req.user = freshUser;
   res.locals.user = freshUser;
-
+  req.token = token;
   next();
 });
 
@@ -157,7 +157,7 @@ export const isLoggedIn = async (req, res, next) => {
 
       const validSession = await Session.findOne({
         userId: decoded.id,
-        sessionId: decoded.sessionId,
+        token: token,
       });
 
       if (!validSession) {
@@ -247,7 +247,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 
   // 3) Update changedPasswordAt property for the user
   // 4) Log the user in, send JWT
-  createSendToken(user, 201, res);
+  createSendToken(user, 201,req, res);
 });
 
 export const updatePassword = catchAsync(async (req, res, next) => {
@@ -261,5 +261,5 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
 
-  createSendToken(user, 201, res);
+  createSendToken(user, 201,req, res);
 });

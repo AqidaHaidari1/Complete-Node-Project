@@ -14,13 +14,13 @@ block content
       .overview-box
         .overview-box__group
           each session in sessions
-            .overview-box__detail(style=`background: ${session.sessionId == currentSessionId ? '#f0fdf4' : '#fff'}; border: 1px solid #ddd; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;`)
+            .overview-box__detail(style=`background: ${session.token == currentToken ? '#f0fdf4' : '#fff'}; border: 1px solid #ddd; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;`)
               .overview-box__text
-                span.overview-box__label(style='font-weight: 600; color: #555')= session.sessionId == currentSessionId ? 'Current Device:' : 'Other Device:'
+                span.overview-box__label(style='font-weight: 600; color: #555')= session.token == currentToken ? 'Current Device:' : 'Other Device:'
                 br
                 span(style='font-size: 1.4rem; color: #333')= session.device
 
-              if session.sessionId != currentSessionId
+              if session.token != currentToken
                 form.logout-form(method='POST', action='/logout-device')
-                  input(type='hidden', name='sessionId', value=session.sessionId)
+                  input(type='hidden', name='token', value=session.token)
                   button.btn.btn--small(type='submit') Logout

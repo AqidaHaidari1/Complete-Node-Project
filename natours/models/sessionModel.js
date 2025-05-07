@@ -5,7 +5,7 @@ const sessionSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'User'
   },
-  sessionId: String,
+  token: String,
   device: String,
   createdAt: { type: Date, default: Date.now },
 });

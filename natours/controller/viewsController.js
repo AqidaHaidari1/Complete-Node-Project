@@ -90,26 +90,24 @@ export const getMyTours = catchAsync(async (req, res, next) => {
 });
 
 export const getMySessions = catchAsync(async (req, res, next) => {
-  console.log(req.session, "something");
-  const sessions = await Session.find({ userId: req.session.userId });
-  console.log(sessions, "here");
-  res.render("userSession", { sessions, currentSessionId: req.session.id });
+  const sessions = await Session.find({ userId: req.user.id });
+  res.render("userSession", { sessions, currentToken: req.token});
 });
 
 export const logOutDevice = catchAsync(async (req, res) => {
-  if (!req.session.userId) return res.redirect("/login");
-  const { sessionId } = req.body;
-  if (sessionId !== req.session.id) {
-    await Session.deleteOne({ sessionId });
+  if (!req.token) return res.redirect("/login");
+  const { token } = req.body;
+  if (token !== req.token) {
+    await Session.deleteOne({ token });
   }
   res.redirect("/my-sessions");
 });
 
 export const logoutAllDevices = catchAsync(async (req, res, next) => {
-  if (!req.session.userId) return res.redirect("/login");
+  if (!req.token) return res.redirect("/login");
   await Session.deleteMany({
-    userId: req.session.userId,
-    sessionId: { $ne: req.session.id },
+    userId: req.user.id,
+    token: { $ne: req.token },
   });
   res.redirect("/my-sessions");
 });
