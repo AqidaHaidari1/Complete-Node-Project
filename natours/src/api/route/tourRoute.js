@@ -1,8 +1,11 @@
 import express from "express";
-import { uploadTourImages,resizeTourImages } from "../controller/tourController.js";
+import { uploadTourImages, resizeTourImages } from "../../controller/tour/tourController.js";
 
 const router = express.Router();
-import { protect, restrictTo } from "../controller/authConroller.js";
+
+import { protect } from "../middleware/protect.js";
+import { restrictTo } from "../middleware/restrictTo.js";
+
 import reviewRouter from "./reviewRoute.js";
 import {
   getAllTours,
@@ -15,7 +18,7 @@ import {
   getMonthlyPlan,
   getToursWithin,
   getDistances,
-} from "../controller/tourController.js";
+} from "../../controller/tour/tourController.js";
 
 // nested routes
 // router
@@ -42,7 +45,13 @@ router
 router
   .route("/:id")
   .get(getTour)
-  .patch(protect, restrictTo("admin", "lead-guide"), uploadTourImages, resizeTourImages, updateTour)
+  .patch(
+    protect,
+    restrictTo("admin", "lead-guide"),
+    uploadTourImages,
+    resizeTourImages,
+    updateTour,
+  )
   .delete(protect, restrictTo("admin", "lead-guide"), deleteTour);
 
 export default router;

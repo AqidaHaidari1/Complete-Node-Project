@@ -1,15 +1,15 @@
 import multer from "multer";
 import sharp from "sharp";
-import User from "../models/userModel.js";
-import AppError from "../utils/appError.js";
-import { catchAsync } from "../utils/catchAsync.js";
+import User from "../../models/userModel.js";
+import AppError from "../../utils/appError.js";
+import { catchAsync } from "../../utils/catchAsync.js";
 import {
   createOne,
   deleteOne,
   getAll,
   getOne,
   updateOne,
-} from "./handlerFactory.js";
+} from "../handlerFactory.js";
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {

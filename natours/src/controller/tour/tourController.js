@@ -1,17 +1,18 @@
 import multer from "multer";
 import sharp from "sharp";
-import Tour from "../models/tourModel.js";
-import APIFeatures from "../utils/apiFeatures.js";
-import { catchAsync } from "../utils/catchAsync.js";
-import AppError from "../utils/appError.js";
-import User from "../models/userModel.js";
+import Tour from "../../models/tourModel.js";
+
+import APIFeatures from "../../utils/apiFeatures.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import AppError from "../../utils/appError.js";
+
 import {
   deleteOne,
   createOne,
   updateOne,
   getOne,
   getAll,
-} from "./handlerFactory.js";
+} from "../handlerFactory.js";
 
 const multerStorage = multer.memoryStorage();
 

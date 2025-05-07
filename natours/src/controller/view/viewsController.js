@@ -1,9 +1,9 @@
-import { catchAsync } from "../utils/catchAsync.js";
-import Tour from "../models/tourModel.js";
-import AppError from "../utils/appError.js";
-import User from "../models/userModel.js";
-import Booking from "../models/bookingModel.js";
-import Session from "../models/sessionModel.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import Tour from "../../models/tourModel.js";
+import AppError from "../../utils/appError.js";
+import User from "../../models/userModel.js";
+import Booking from "../../models/bookingModel.js";
+import Session from "../../models/sessionModel.js";
 
 export const getOverview = catchAsync(async (req, res, next) => {
   const tours = await Tour.find();
@@ -91,7 +91,7 @@ export const getMyTours = catchAsync(async (req, res, next) => {
 
 export const getMySessions = catchAsync(async (req, res, next) => {
   const sessions = await Session.find({ userId: req.user.id });
-  res.render("userSession", { sessions, currentToken: req.token});
+  res.render("userSession", { sessions, currentToken: req.token });
 });
 
 export const logOutDevice = catchAsync(async (req, res) => {

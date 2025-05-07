@@ -6,9 +6,10 @@ import {
   getBooking,
   updateBooking,
   deleteBooking,
-} from "../controller/bookingController.js";
-import { protect } from "../controller/authConroller.js";
-import { restrictTo } from "../controller/authConroller.js";
+} from "../../controller/tour/bookingController.js";
+
+import { protect } from "../middleware/protect.js";
+import { restrictTo } from "../middleware/restrictTo.js";
 
 const router = express.Router();
 

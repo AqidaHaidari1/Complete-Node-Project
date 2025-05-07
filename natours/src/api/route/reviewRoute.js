@@ -7,8 +7,9 @@ import {
   deleteReview,
   setUserAndTourIds,
   updateReview,
-} from "../controller/reviewsController.js";
-import { restrictTo, protect } from "../controller/authConroller.js";
+} from "../../controller/tour/reviewsController.js";
+import { restrictTo } from "../middleware/restrictTo.js";
+import { protect } from "../middleware/protect.js";
 
 const router = express.Router({ mergeParams: true });
 

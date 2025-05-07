@@ -12,15 +12,15 @@ import cors from "cors";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 
-import tourRouter from "./route/tourRoute.js";
-import userRouter from "./route/userRoute.js";
-import reviewRouter from "./route/reviewRoute.js";
-import viewRouter from "./route/viewRoutes.js";
-import bookingRouter from "./route/bookingRoutes.js";
+import tourRouter from "./src/api/route/tourRoute.js";
+import userRouter from "./src/api/route/userRoute.js";
+import reviewRouter from "./src/api/route/reviewRoute.js";
+import viewRouter from "./src/api/route/viewRoutes.js";
+import bookingRouter from "./src/api/route/bookingRoutes.js";
 
 import { configDotenv } from "dotenv";
-import { globalErrorController } from "./controller/errorController.js";
-import AppError from "./utils/appError.js";
+import { globalErrorController } from "./src/controller/error/errorController.js";
+import AppError from "./src/utils/appError.js";
 import cookieParser from "cookie-parser";
 
 configDotenv();
@@ -30,7 +30,7 @@ const app = new express();
 app.set("view engine", "pug");
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "src/views"));
 // global middlewares
 
 // app.use(
